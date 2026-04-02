@@ -23,6 +23,8 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
 
+iosApp/iosApp/Secrets.plist
+
 # BlueJ files
 *.ctxt
 
