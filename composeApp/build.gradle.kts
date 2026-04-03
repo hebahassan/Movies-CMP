@@ -1,11 +1,12 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -13,6 +14,10 @@ kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
+    }
+
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
     
     listOf(
@@ -29,8 +34,18 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
+
+            //Coroutines
+            implementation(libs.kotlinx.coroutines.android)
+
+            //Koin
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
+            implementation(project(":core:ui"))
+            implementation(project(":core:network"))
+            implementation(project(":core:common"))
+
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
@@ -39,6 +54,20 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+
+            //Coroutines
+            implementation(libs.kotlinx.coroutines.core)
+
+            //Koin
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+
+            //Coil
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor)
+        }
+        iosMain.dependencies {
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -56,6 +85,17 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+
+        val properties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.inputStream().use { properties.load(it) }
+        }
+        buildConfigField(
+            "String",
+            "TMDB_ACCESS_TOKEN",
+            "\"${properties.getProperty("tmdb.access.token") ?: ""}\""
+        )
     }
     packaging {
         resources {
@@ -70,6 +110,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+    buildFeatures {
+        buildConfig = true
     }
 }
 
