@@ -35,9 +35,6 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
 
-            //Ktor
-            implementation(libs.ktor.client.okhttp)
-
             //Coroutines
             implementation(libs.kotlinx.coroutines.android)
 
@@ -45,6 +42,10 @@ kotlin {
             implementation(libs.koin.android)
         }
         commonMain.dependencies {
+            implementation(project(":core:ui"))
+            implementation(project(":core:network"))
+            implementation(project(":core:common"))
+
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
@@ -57,15 +58,7 @@ kotlin {
             //Coroutines
             implementation(libs.kotlinx.coroutines.core)
 
-            //Ktor
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.json)
-            implementation(libs.ktor.client.logging)
-            implementation(libs.kotlinx.serialization.json)
-
             //Koin
-            implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
 
@@ -74,8 +67,7 @@ kotlin {
             implementation(libs.coil.network.ktor)
         }
         iosMain.dependencies {
-            //Ktor
-            implementation(libs.ktor.client.darwin)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

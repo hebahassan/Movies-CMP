@@ -1,7 +1,7 @@
 package com.example.moviescmp
 
 import androidx.compose.ui.window.ComposeUIViewController
-import com.example.moviescmp.core.di.initKoin
+import com.example.moviescmp.di.initKoin
 
 fun MainViewController() = ComposeUIViewController(
     configure = { initKoin() }
