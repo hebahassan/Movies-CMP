@@ -45,6 +45,7 @@ kotlin {
             implementation(project(":core:ui"))
             implementation(project(":core:network"))
             implementation(project(":core:common"))
+            implementation(project(":feature:home"))
 
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
@@ -54,13 +55,13 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.navigation.compose)
 
             //Coroutines
             implementation(libs.kotlinx.coroutines.core)
 
             //Koin
             implementation(libs.koin.compose)
-            implementation(libs.koin.compose.viewmodel)
 
             //Coil
             implementation(libs.coil.compose)
