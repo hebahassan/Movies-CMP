@@ -36,16 +36,22 @@ kotlin {
             dependencies {
                 implementation(project(":core:common"))
                 implementation(project(":core:network"))
+                implementation(project(":core:ui"))
 
                 implementation(libs.compose.runtime)
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.material3)
                 implementation(libs.compose.ui)
+                implementation(libs.compose.components.resources)
                 implementation(libs.androidx.lifecycle.viewmodelCompose)
                 implementation(libs.androidx.lifecycle.runtimeCompose)
 
                 //Koin
                 implementation(libs.koin.compose.viewmodel)
+
+                //Coil
+                implementation(libs.coil.compose)
+                implementation(libs.coil.network.ktor)
             }
         }
 

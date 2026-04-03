@@ -3,7 +3,9 @@ package com.example.feature.home.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.feature.home.domain.repo.HomeRepository
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -12,6 +14,9 @@ class HomeViewModel(private val repository: HomeRepository): ViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
+
+    private val _effect = MutableSharedFlow<HomeEffect>()
+    val effect = _effect.asSharedFlow()
 
     init {
         handleIntent(HomeIntent.LoadData)

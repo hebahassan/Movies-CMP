@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.feature.home.presentation.HomeScreen
+import com.example.feature.home.presentation.HomeNavigationRoute
 
 @Composable
 fun AppNavHost() {
@@ -15,7 +15,7 @@ fun AppNavHost() {
         startDestination = HomeRoute
     ) {
         composable<HomeRoute> {
-            HomeScreen()
+            HomeNavigationRoute()
         }
     }
 }
