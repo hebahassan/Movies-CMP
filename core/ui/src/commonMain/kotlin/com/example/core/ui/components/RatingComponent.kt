@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import coil3.compose.AsyncImage
-import com.example.core.ui.Dimens
+import com.example.core.ui.theme.Dimens
 import com.example.core.ui.ratingBadgeColor
 import moviescmp.core.ui.generated.resources.Res
 

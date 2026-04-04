@@ -2,7 +2,7 @@ package com.example.moviescmp
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.core.ui.MoviesTheme
+import com.example.core.ui.theme.MoviesTheme
 import com.example.moviescmp.navigation.AppNavHost
 
 @Composable
