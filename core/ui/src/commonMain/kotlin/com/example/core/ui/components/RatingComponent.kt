@@ -14,13 +14,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import coil3.compose.AsyncImage
 import com.example.core.ui.Dimens
+import com.example.core.ui.ratingBadgeColor
 import moviescmp.core.ui.generated.resources.Res
 
 @Composable
 fun RatingComponent(rating: Double) {
     Surface(
         shape = RoundedCornerShape(Dimens.paddingMedium),
-        color = MaterialTheme.colorScheme.primary /*TODO: platform-specific*/
+        color = ratingBadgeColor()
     ) {
         Row(
             modifier = Modifier
@@ -37,7 +38,7 @@ fun RatingComponent(rating: Double) {
 
             Text(
                 text = "$rating / 10",
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.onTertiary,
                 style = MaterialTheme.typography.bodyMedium
             )
         }
