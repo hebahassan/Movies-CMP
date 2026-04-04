@@ -12,5 +12,5 @@ val homeModule = module {
     single { HomeApiService(client = get()) }
     single<HomeRepository> { HomeRepositoryImpl(apiService = get()) }
     single { GetFilteredTopRatedMoviesUseCase() }
-    viewModel { HomeViewModel(repository = get()) }
+    viewModel { HomeViewModel(repository = get(), filteredTopRatedMoviesUseCase = get()) }
 }

@@ -2,6 +2,7 @@ package com.example.feature.home.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,10 +11,13 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.core.ui.theme.Dimens
 import com.example.core.ui.components.ErrorBanner
@@ -23,7 +27,9 @@ import com.example.feature.home.presentation.components.TopRatedMovie
 import com.example.feature.home.presentation.components.UpcomingMovie
 import kotlinx.coroutines.flow.SharedFlow
 import moviescmp.core.ui.generated.resources.Res
+import moviescmp.core.ui.generated.resources.all_movies
 import moviescmp.core.ui.generated.resources.coming_soon
+import moviescmp.core.ui.generated.resources.no_filtered_movies
 import moviescmp.core.ui.generated.resources.no_trending_movies
 import moviescmp.core.ui.generated.resources.no_upcoming_movies
 import moviescmp.core.ui.generated.resources.top_rated
@@ -88,28 +94,74 @@ fun HomeScreen(
             )
         }
 
-        /*Todo*/
-//        item(key = "Genres") {
-//
-//        }
+        item(key = "Genres") {
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = Dimens.paddingLarge),
+                horizontalArrangement = Arrangement.spacedBy(Dimens.paddingMedium)
+            ) {
+                item {
+                    FilterChip(
+                        selected = state.selectedGenreId == null,
+                        onClick = { onIntent(HomeIntent.GenreSelected(null)) },
+                        label = { Text(stringResource(Res.string.all_movies)) }
+                    )
+                }
+
+                items(
+                    items = state.genres,
+                    key = { genre -> genre.id }
+                ) { genre ->
+                    FilterChip(
+                        selected = state.selectedGenreId == genre.id,
+                        onClick = { onIntent(HomeIntent.GenreSelected(genre.id)) },
+                        label = { Text(genre.name) }
+                    )
+                }
+            }
+        }
 
         item(key = "Top Rated List") {
-            when (val topRatedMovies = state.topRatedMovies) {
+            when (state.topRatedMovies) {
                 HomeStateMachine.Loading -> LoadingComponent()
 
                 is HomeStateMachine.Success -> {
-                    LazyRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentPadding = PaddingValues(horizontal = Dimens.paddingLarge),
-                        horizontalArrangement = Arrangement.spacedBy(Dimens.paddingMedium)
-                    ) {
-                        items(
-                            items = topRatedMovies.data,
-                            key = { movie -> movie.id }
-                        ) { movie ->
-                            TopRatedMovie(
-                                movie = movie,
-                                onClick = { onIntent(HomeIntent.MovieClicked(movie.id)) }
+                    if (state.filteredTopRatedMovies.isNotEmpty()) {
+                        val listState = rememberLazyListState()
+
+                        LaunchedEffect(state.selectedGenreId) {
+                            listState.animateScrollToItem(0)
+                        }
+
+                        LazyRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            state = listState,
+                            contentPadding = PaddingValues(horizontal = Dimens.paddingLarge),
+                            horizontalArrangement = Arrangement.spacedBy(Dimens.paddingMedium)
+                        ) {
+                            items(
+                                items = state.filteredTopRatedMovies,
+                                key = { movie -> movie.id }
+                            ) { movie ->
+                                TopRatedMovie(
+                                    movie = movie,
+                                    onClick = {
+                                        onIntent(HomeIntent.MovieClicked(movie.id))
+                                    }
+                                )
+                            }
+                        }
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = Dimens.paddingLarge),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                stringResource(Res.string.no_filtered_movies),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary
                             )
                         }
                     }

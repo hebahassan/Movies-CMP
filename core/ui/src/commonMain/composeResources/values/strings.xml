@@ -5,4 +5,6 @@
     <string name="no_trending_movies">No trending movies</string>
     <string name="no_top_rated_movie">No movies</string>
     <string name="no_upcoming_movies">No upcoming movies</string>
+    <string name="all_movies">All</string>
+    <string name="no_filtered_movies">No Movies Available</string>
 </resources>

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.feature.home.domain.model.Movie
 import com.example.feature.home.domain.repo.HomeRepository
+import com.example.feature.home.domain.usecase.GetFilteredTopRatedMoviesUseCase
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 
-class HomeViewModel(private val repository: HomeRepository): ViewModel() {
+class HomeViewModel(
+    private val repository: HomeRepository,
+    private val filteredTopRatedMoviesUseCase: GetFilteredTopRatedMoviesUseCase
+): ViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
@@ -101,6 +105,8 @@ class HomeViewModel(private val repository: HomeRepository): ViewModel() {
                     filteredTopRatedMovies = movies
                 )
             }
+
+            filterTopRatedMovies()
         } catch (_: Exception) {
             _state.update {
                 it.copy(topRatedMovies = HomeStateMachine.Error)
@@ -121,6 +127,10 @@ class HomeViewModel(private val repository: HomeRepository): ViewModel() {
     }
 
     private fun filterTopRatedMovies() {
-        
+        val movies = (state.value.topRatedMovies as? HomeStateMachine.Success)?.data ?: return
+        val filteredList = filteredTopRatedMoviesUseCase(movies, state.value.selectedGenreId)
+        _state.update {
+            it.copy(filteredTopRatedMovies = filteredList)
+        }
     }
 }
