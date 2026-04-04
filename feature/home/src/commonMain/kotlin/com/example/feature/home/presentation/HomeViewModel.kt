@@ -32,6 +32,11 @@ class HomeViewModel(private val repository: HomeRepository): ViewModel() {
             is HomeIntent.MovieClicked -> {
                 /*Todo: Navigation*/
             }
+
+            is HomeIntent.GenreSelected -> {
+                _state.update { it.copy(selectedGenreId = intent.genreId) }
+                filterTopRatedMovies()
+            }
         }
     }
 
@@ -49,6 +54,14 @@ class HomeViewModel(private val repository: HomeRepository): ViewModel() {
                         onUpcomingMoviesState(HomeStateMachine.Error)
                     }
                 ){ getUpcomingMovies() }
+
+                launch (
+                    CoroutineExceptionHandler { _, _ ->
+                        _state.update {
+                            it.copy(topRatedMovies = HomeStateMachine.Error)
+                        }
+                    }
+                ){ getTopRatedMovies() }
             }
         }
     }
@@ -73,6 +86,28 @@ class HomeViewModel(private val repository: HomeRepository): ViewModel() {
         }
     }
 
+    private suspend fun getTopRatedMovies() {
+        _state.update {
+            it.copy(topRatedMovies = HomeStateMachine.Loading)
+        }
+        try {
+            val movies = repository.getTopRatedMovies()
+            val genres = repository.getGenres()
+
+            _state.update {
+                it.copy(
+                    genres = genres,
+                    topRatedMovies = HomeStateMachine.Success(movies),
+                    filteredTopRatedMovies = movies
+                )
+            }
+        } catch (_: Exception) {
+            _state.update {
+                it.copy(topRatedMovies = HomeStateMachine.Error)
+            }
+        }
+    }
+
     private fun onTrendingMoviesState(state: HomeStateMachine<List<Movie>>) {
         _state.update {
             it.copy(trendingMovies = state)
@@ -83,5 +118,9 @@ class HomeViewModel(private val repository: HomeRepository): ViewModel() {
         _state.update {
             it.copy(upcomingMovies = state)
         }
+    }
+
+    private fun filterTopRatedMovies() {
+        
     }
 }

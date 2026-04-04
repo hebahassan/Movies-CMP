@@ -1,10 +1,14 @@
 package com.example.feature.home.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,12 +19,14 @@ import com.example.core.ui.theme.Dimens
 import com.example.core.ui.components.ErrorBanner
 import com.example.core.ui.components.LoadingComponent
 import com.example.feature.home.presentation.components.FeaturedBanner
+import com.example.feature.home.presentation.components.TopRatedMovie
 import com.example.feature.home.presentation.components.UpcomingMovie
 import kotlinx.coroutines.flow.SharedFlow
 import moviescmp.core.ui.generated.resources.Res
 import moviescmp.core.ui.generated.resources.coming_soon
 import moviescmp.core.ui.generated.resources.no_trending_movies
 import moviescmp.core.ui.generated.resources.no_upcoming_movies
+import moviescmp.core.ui.generated.resources.top_rated
 import moviescmp.core.ui.generated.resources.trending_this_week
 import org.jetbrains.compose.resources.stringResource
 
@@ -66,6 +72,50 @@ fun HomeScreen(
                 )
 
                 is HomeStateMachine.Error -> ErrorBanner(
+                    modifier = Modifier.padding(all = Dimens.paddingLarge),
+                    message = stringResource(Res.string.no_trending_movies)
+                )
+            }
+        }
+
+        item(key = "Top Rated Header") {
+            Text(
+                text = stringResource(Res.string.top_rated),
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .padding(horizontal = Dimens.paddingLarge, vertical = Dimens.paddingXLarge)
+            )
+        }
+
+        /*Todo*/
+//        item(key = "Genres") {
+//
+//        }
+
+        item(key = "Top Rated List") {
+            when (val topRatedMovies = state.topRatedMovies) {
+                HomeStateMachine.Loading -> LoadingComponent()
+
+                is HomeStateMachine.Success -> {
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(horizontal = Dimens.paddingLarge),
+                        horizontalArrangement = Arrangement.spacedBy(Dimens.paddingMedium)
+                    ) {
+                        items(
+                            items = topRatedMovies.data,
+                            key = { movie -> movie.id }
+                        ) { movie ->
+                            TopRatedMovie(
+                                movie = movie,
+                                onClick = { onIntent(HomeIntent.MovieClicked(movie.id)) }
+                            )
+                        }
+                    }
+                }
+
+                HomeStateMachine.Error -> ErrorBanner(
                     modifier = Modifier.padding(all = Dimens.paddingLarge),
                     message = stringResource(Res.string.no_trending_movies)
                 )
