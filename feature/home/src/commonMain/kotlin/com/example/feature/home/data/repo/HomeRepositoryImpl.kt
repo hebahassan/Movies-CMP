@@ -12,4 +12,10 @@ class HomeRepositoryImpl(private val apiService: HomeApiService): HomeRepository
             it.toDomain()
         }
     }
+
+    override suspend fun getUpcomingMovies(): List<Movie> {
+        return apiService.getUpcomingMovies().results.take(5).map {
+            it.toDomain()
+        }
+    }
 }

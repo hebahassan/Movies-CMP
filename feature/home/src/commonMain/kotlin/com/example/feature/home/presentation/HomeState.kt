@@ -9,15 +9,14 @@ sealed interface HomeStateMachine<out T> {
     @Immutable
     data class Success<T>(val data: T): HomeStateMachine<T>
 
-    data class Error(val message: String): HomeStateMachine<Nothing>
+    data object Error: HomeStateMachine<Nothing>
 }
 
 sealed interface HomeEffect {
-    data class ShowErrorMessage(val message: String): HomeEffect
-
     data class NavigateToMovieDetails(val movieId: Int): HomeEffect
 }
 
 data class HomeState(
-    val trendingMovies: HomeStateMachine<List<Movie>> = HomeStateMachine.Loading
+    val trendingMovies: HomeStateMachine<List<Movie>> = HomeStateMachine.Loading,
+    val upcomingMovies: HomeStateMachine<List<Movie>> = HomeStateMachine.Loading
 )

@@ -5,10 +5,17 @@ import com.example.feature.home.data.model.MoviesResponseDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 
 class HomeApiService(private val client: HttpClient) {
 
     suspend fun getTrendingMovies(): MoviesResponseDto {
         return client.get(ApiConstants.Endpoints.TRENDING_MOVIES_URL).body()
+    }
+
+    suspend fun getUpcomingMovies(): MoviesResponseDto {
+        return client.get(ApiConstants.Endpoints.UPCOMING_MOVIES_URL) {
+            parameter("page", 1)
+        }.body()
     }
 }

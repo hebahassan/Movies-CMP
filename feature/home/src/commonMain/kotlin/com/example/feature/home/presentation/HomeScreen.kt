@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,11 +33,17 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
 import com.example.core.ui.Dimens
+import com.example.core.ui.components.ErrorBanner
 import com.example.core.ui.components.LoadingComponent
 import com.example.core.ui.components.RatingComponent
 import com.example.feature.home.domain.model.Movie
 import kotlinx.coroutines.flow.SharedFlow
 import moviescmp.core.ui.generated.resources.Res
+import moviescmp.core.ui.generated.resources.coming_soon
+import moviescmp.core.ui.generated.resources.no_trending_movies
+import moviescmp.core.ui.generated.resources.no_upcoming_movies
+import moviescmp.core.ui.generated.resources.trending_this_week
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HomeScreen(
@@ -46,37 +55,77 @@ fun HomeScreen(
         effect.collect { effect ->
             when (effect) {
                 is HomeEffect.NavigateToMovieDetails -> { /*Todo: navigation callback*/ }
-
-                is HomeEffect.ShowErrorMessage -> { /*Todo: error banner*/ }
             }
         }
     }
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        Text(
-            text = "Trending This Week",
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier
-                .statusBarsPadding()
-                .padding(horizontal = Dimens.paddingLarge)
-        )
-
-        when (val trending = state.trendingMovies) {
-            HomeStateMachine.Loading -> LoadingComponent()
-
-            is HomeStateMachine.Success -> FeaturedBanner(
-                movies = trending.data,
-                onMovieClick = { movieId ->
-                    onIntent(HomeIntent.MovieClicked(movieId))
-                }
+        item(key = "Trending Header") {
+            Text(
+                text = stringResource(Res.string.trending_this_week),
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .padding(horizontal = Dimens.paddingLarge, vertical = Dimens.paddingXLarge)
             )
+        }
 
-            is HomeStateMachine.Error -> { /*Todo: error*/ }
+        item(key = "Trending Banner") {
+            when (val trending = state.trendingMovies) {
+                HomeStateMachine.Loading -> LoadingComponent()
+
+                is HomeStateMachine.Success -> FeaturedBanner(
+                    movies = trending.data,
+                    onMovieClick = { movieId ->
+                        onIntent(HomeIntent.MovieClicked(movieId))
+                    }
+                )
+
+                is HomeStateMachine.Error -> ErrorBanner(
+                    modifier = Modifier.padding(all = Dimens.paddingLarge),
+                    message = stringResource(Res.string.no_trending_movies)
+                )
+            }
+        }
+
+        item(key = "Upcoming Header") {
+            Text(
+                text = stringResource(Res.string.coming_soon),
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .padding(horizontal = Dimens.paddingLarge, vertical = Dimens.paddingXLarge)
+            )
+        }
+
+        when (val upcoming = state.upcomingMovies) {
+            HomeStateMachine.Loading -> item(key = "Upcoming Loading") {
+                LoadingComponent()
+            }
+
+            is HomeStateMachine.Success -> items(
+                items = upcoming.data,
+                key = { movie -> movie.id }
+            ) { movie ->
+                UpcomingMovie(
+                    movie = movie,
+                    onMovieClick = {
+                        onIntent(HomeIntent.MovieClicked(movie.id))
+                    }
+                )
+            }
+
+            is HomeStateMachine.Error -> item(key = "Upcoming Error") {
+                ErrorBanner(
+                    modifier = Modifier.padding(all = Dimens.paddingLarge),
+                    message = stringResource(Res.string.no_upcoming_movies)
+                )
+            }
         }
     }
 }
@@ -99,7 +148,7 @@ fun FeaturedBanner(
         ) { page ->
             BannerMovie(
                 movie = movies[page],
-                onMovieClick = onMovieClick
+                onMovieClick = { onMovieClick(movies[page].id) }
             )
         }
 
@@ -130,14 +179,14 @@ fun FeaturedBanner(
 @Composable
 fun BannerMovie(
     movie: Movie,
-    onMovieClick: (Int) -> Unit
+    onMovieClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = Dimens.paddingLarge)
             .clip(RoundedCornerShape(Dimens.cornerLarge))
-            .clickable { onMovieClick(movie.id) }
+            .clickable { onMovieClick() }
     ) {
         AsyncImage(
             model = movie.backdropUrl,
@@ -182,6 +231,57 @@ fun BannerMovie(
             )
 
             RatingComponent(rating = movie.rating)
+        }
+    }
+}
+
+@Composable
+fun UpcomingMovie(
+    movie: Movie,
+    onMovieClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onMovieClick() }
+            .padding(horizontal = Dimens.paddingLarge, vertical = Dimens.paddingMedium),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            model = movie.posterUrl,
+            placeholder = rememberAsyncImagePainter(
+                Res.getUri("drawable/ic_placeholder.svg")
+            ),
+            error = rememberAsyncImagePainter(
+                Res.getUri("drawable/ic_placeholder.svg")
+            ),
+            contentDescription = movie.title,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .width(100.dp)
+                .height(120.dp)
+                .clip(RoundedCornerShape(Dimens.cornerSmall))
+        )
+
+        Column(
+            modifier = Modifier
+                .padding(start = Dimens.paddingMedium),
+            verticalArrangement = Arrangement.spacedBy(Dimens.paddingLarge)
+        ) {
+            Text(
+                text = movie.title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
+                maxLines = 2
+            )
+
+            movie.releaseDate?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondary
+                )
+            }
         }
     }
 }

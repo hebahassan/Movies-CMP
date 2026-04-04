@@ -18,4 +18,5 @@ object Dimens {
     val bannerHeight = 250.dp
     val indicatorSize = 8.dp
     val indicatorSpacing = 3.dp
+    val dividerHeight = 2.dp
 }
