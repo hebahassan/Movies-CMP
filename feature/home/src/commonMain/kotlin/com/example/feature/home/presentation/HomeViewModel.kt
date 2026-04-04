@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.feature.home.domain.model.Movie
 import com.example.feature.home.domain.repo.HomeRepository
 import com.example.feature.home.domain.usecase.GetFilteredTopRatedMoviesUseCase
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -47,46 +46,44 @@ class HomeViewModel(
     private fun fetchApisData() {
         viewModelScope.launch {
             supervisorScope {
-                launch(
-                    CoroutineExceptionHandler { _, _ ->
-                        onTrendingMoviesState(HomeStateMachine.Error)
-                    }
-                ) { getTrendingMovies() }
+                launch { getTrendingMovies() }
 
-                launch (
-                    CoroutineExceptionHandler { _, _ ->
-                        onUpcomingMoviesState(HomeStateMachine.Error)
-                    }
-                ){ getUpcomingMovies() }
+                launch { getUpcomingMovies() }
 
-                launch (
-                    CoroutineExceptionHandler { _, _ ->
-                        _state.update {
-                            it.copy(topRatedMovies = HomeStateMachine.Error)
-                        }
-                    }
-                ){ getTopRatedMovies() }
+                launch { getGenres() }
+
+                launch { getTopRatedMovies() }
             }
         }
     }
 
     private suspend fun getTrendingMovies() {
         onTrendingMoviesState(HomeStateMachine.Loading)
-        try {
-            val trendingMovies = repository.getTrendingMovies()
-            onTrendingMoviesState(HomeStateMachine.Success(trendingMovies))
-        } catch (_: Exception) {
+        runCatching {
+            repository.getTrendingMovies()
+        }.onSuccess { movies ->
+            onTrendingMoviesState(HomeStateMachine.Success(movies))
+        }.onFailure {
             onTrendingMoviesState(HomeStateMachine.Error)
         }
     }
 
     private suspend fun getUpcomingMovies() {
         onUpcomingMoviesState(HomeStateMachine.Loading)
-        try {
-            val upcomingMovies = repository.getUpcomingMovies()
-            onUpcomingMoviesState(HomeStateMachine.Success(upcomingMovies))
-        } catch (_: Exception) {
+        runCatching {
+            repository.getUpcomingMovies()
+        }.onSuccess { movies ->
+            onUpcomingMoviesState(HomeStateMachine.Success(movies))
+        }.onFailure {
             onUpcomingMoviesState(HomeStateMachine.Error)
+        }
+    }
+
+    private suspend fun getGenres() {
+        runCatching {
+            repository.getGenres()
+        }.onSuccess { genres ->
+            _state.update { it.copy(genres = genres) }
         }
     }
 
@@ -94,20 +91,16 @@ class HomeViewModel(
         _state.update {
             it.copy(topRatedMovies = HomeStateMachine.Loading)
         }
-        try {
-            val movies = repository.getTopRatedMovies()
-            val genres = repository.getGenres()
-
+        runCatching {
+            repository.getTopRatedMovies()
+        }.onSuccess { movies ->
             _state.update {
                 it.copy(
-                    genres = genres,
                     topRatedMovies = HomeStateMachine.Success(movies),
                     filteredTopRatedMovies = movies
                 )
             }
-
-            filterTopRatedMovies()
-        } catch (_: Exception) {
+        }.onFailure {
             _state.update {
                 it.copy(topRatedMovies = HomeStateMachine.Error)
             }

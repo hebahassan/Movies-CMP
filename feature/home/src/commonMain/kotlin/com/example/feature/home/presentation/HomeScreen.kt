@@ -2,7 +2,6 @@ package com.example.feature.home.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.core.ui.theme.Dimens
 import com.example.core.ui.components.ErrorBanner
@@ -152,24 +150,16 @@ fun HomeScreen(
                             }
                         }
                     } else {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = Dimens.paddingLarge),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                stringResource(Res.string.no_filtered_movies),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
+                        ErrorBanner(
+                            modifier = Modifier.padding(vertical = Dimens.paddingLarge),
+                            message = stringResource(Res.string.no_filtered_movies)
+                        )
                     }
                 }
 
                 HomeStateMachine.Error -> ErrorBanner(
                     modifier = Modifier.padding(all = Dimens.paddingLarge),
-                    message = stringResource(Res.string.no_trending_movies)
+                    message = stringResource(Res.string.no_filtered_movies)
                 )
             }
         }
