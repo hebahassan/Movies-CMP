@@ -11,6 +11,10 @@ sealed interface DetailsStateMachine {
     data object Error: DetailsStateMachine
 }
 
+sealed interface DetailsEffect {
+    data class ShareMovie(val movieId: Int, val movieTitle: String): DetailsEffect
+}
+
 data class MovieDetailsState(
     val movieDetails: DetailsStateMachine = DetailsStateMachine.Loading
 )

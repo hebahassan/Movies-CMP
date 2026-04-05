@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.example.feature.details.domain.repo.MovieDetailsRepository
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -20,13 +22,16 @@ class MovieDetailsViewModel(
     private val _state = MutableStateFlow(MovieDetailsState())
     val state = _state.asStateFlow()
 
+    private val _effect = MutableSharedFlow<DetailsEffect>()
+    val effect = _effect.asSharedFlow()
+
     init {
         loadMovieDetails()
     }
 
     fun handleIntent(intent: MovieDetailsIntent) {
         when (intent) {
-            MovieDetailsIntent.ShareMovie -> { /*todo*/ }
+            MovieDetailsIntent.ShareMovie -> onShareClicked()
         }
     }
 
@@ -46,6 +51,15 @@ class MovieDetailsViewModel(
                     it.copy(movieDetails = DetailsStateMachine.Error)
                 }
             }
+        }
+    }
+
+    private fun onShareClicked() {
+        val details = (_state.value.movieDetails as? DetailsStateMachine.Success)?.data ?: return
+        viewModelScope.launch {
+            _effect.emit(
+                DetailsEffect.ShareMovie(details.id, details.title)
+            )
         }
     }
 }
