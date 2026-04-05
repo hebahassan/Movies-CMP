@@ -17,8 +17,8 @@ iosApp/              → iOS entry point
 Multi-module architecture enforces clear layer boundaries, each feature module contains data, domain, and presentation as packages to keep feature isolated and for Gradle to only build what changed, making development loop much faster.
 
 # Build & Run
-Android: Select composeApp configuration -> Run
-iOS: Select iosApp configuration -> Run / Open iosApp/iosApp.xcodeproj in Xcode -> Run
+- Android: Select composeApp configuration -> Run
+- iOS: Select iosApp configuration -> Run / Open iosApp/iosApp.xcodeproj in Xcode -> Run
 
 # API key setup
 1- For Android: Add your access token to `local.properties`
