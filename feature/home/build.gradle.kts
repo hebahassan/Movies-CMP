@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
@@ -19,7 +21,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "CoreNetwork"
+            baseName = "FeatureHome"
             isStatic = true
         }
     }
@@ -33,12 +35,23 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":core:common"))
+                implementation(project(":core:network"))
+                implementation(project(":core:ui"))
 
-                api(libs.kotlinx.serialization.json)
-                api(libs.ktor.client.core)
-                implementation(libs.ktor.client.content.negotiation)
-                implementation(libs.ktor.serialization.json)
-                implementation(libs.ktor.client.logging)
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material3)
+                implementation(libs.compose.ui)
+                implementation(libs.compose.components.resources)
+                implementation(libs.androidx.lifecycle.viewmodelCompose)
+                implementation(libs.androidx.lifecycle.runtimeCompose)
+
+                //Koin
+                implementation(libs.koin.compose.viewmodel)
+
+                //Coil
+                implementation(libs.coil.compose)
+                implementation(libs.coil.network.ktor)
             }
         }
 
@@ -53,7 +66,6 @@ kotlin {
                 // Add Android-specific dependencies here. Note that this source set depends on
                 // commonMain by default and will correctly pull the Android artifacts of any KMP
                 // dependencies declared in commonMain.
-                implementation(libs.ktor.client.okhttp)
             }
         }
 
@@ -64,7 +76,6 @@ kotlin {
                 // part of KMP’s default source set hierarchy. Note that this source set depends
                 // on common by default and will correctly pull the iOS artifacts of any
                 // KMP dependencies declared in commonMain.
-                implementation(libs.ktor.client.darwin)
             }
         }
     }
@@ -72,7 +83,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.example.moviescmp.core.network"
+    namespace = "com.example.moviescmp.feature.home"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {

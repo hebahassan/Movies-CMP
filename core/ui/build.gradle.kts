@@ -37,6 +37,10 @@ kotlin {
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.material3)
                 implementation(libs.compose.components.resources)
+
+                //Coil
+                implementation(libs.coil.compose)
+                implementation(libs.coil.svg)
             }
         }
 
@@ -78,5 +82,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    compose.resources {
+        publicResClass = true
     }
 }

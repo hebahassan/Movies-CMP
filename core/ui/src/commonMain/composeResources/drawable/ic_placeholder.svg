@@ -1,0 +1,17 @@
+<svg width="400" height="225" viewBox="0 0 400 225" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="225" rx="8" fill="#F3F4F6"/>
+  
+  <g transform="translate(168, 80)">
+    <rect x="0" y="15" width="45" height="35" rx="4" fill="#9CA3AF"/>
+    
+    <path d="M45 22L60 12V53L45 43V22Z" fill="#9CA3AF"/>
+    
+    <circle cx="12" cy="10" r="10" fill="#9CA3AF"/>
+    <circle cx="33" cy="10" r="10" fill="#9CA3AF"/>
+    
+    <circle cx="12" cy="10" r="4" fill="#F3F4F6"/>
+    <circle cx="33" cy="10" r="4" fill="#F3F4F6"/>
+  </g>
+  
+  <text x="50%" y="165" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#6B7280" font-weight="500">Preview Unavailable</text>
+</svg>

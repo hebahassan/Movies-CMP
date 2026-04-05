@@ -1,4 +1,4 @@
-package com.example.core.ui
+package com.example.core.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -10,24 +10,31 @@ import androidx.compose.ui.graphics.Color
 private val DarkColorScheme = darkColorScheme(
     primary = Primary,
     secondary = SecondaryDark,
+    tertiary = Tertiary,
     background = BackgroundDark,
-    error = Error,
     surface = SurfaceDark,
+    errorContainer = ErrorContainerDark,
     onPrimary = OnPrimary,
     onSecondary = OnSecondary,
+    onTertiary = OnTertiary,
     onBackground = OnPrimary,
-    onSurface = OnPrimary
+    onSurface = OnPrimary,
+    onErrorContainer = OnErrorContainerDark,
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Primary,
     secondary = SecondaryLight,
+    tertiary = Tertiary,
     background = BackgroundLight,
     surface = SurfaceLight,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
+    errorContainer = ErrorContainerLight,
+    onPrimary = Color.Black,
+    onSecondary = OnSecondary,
+    onTertiary = OnTertiary,
     onBackground = Color.Black,
     onSurface = Color.Black,
+    onErrorContainer = OnErrorContainerLight,
 )
 
 @Composable

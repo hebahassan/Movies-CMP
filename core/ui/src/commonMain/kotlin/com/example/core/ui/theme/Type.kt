@@ -1,4 +1,4 @@
-package com.example.core.ui
+package com.example.core.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
@@ -8,11 +8,11 @@ import androidx.compose.ui.unit.sp
 val MoviesTypography = Typography(
     headlineLarge = TextStyle(
         fontWeight = FontWeight.Bold,
-        fontSize = 28.sp
+        fontSize = 22.sp
     ),
     headlineMedium = TextStyle(
         fontWeight = FontWeight.Bold,
-        fontSize = 22.sp
+        fontSize = 20.sp
     ),
     titleLarge = TextStyle(
         fontWeight = FontWeight.SemiBold,
@@ -32,6 +32,6 @@ val MoviesTypography = Typography(
     ),
     labelSmall = TextStyle(
         fontWeight = FontWeight.Medium,
-        fontSize = 11.sp
+        fontSize = 12.sp
     )
 )
