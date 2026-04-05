@@ -23,7 +23,6 @@ import com.example.core.ui.components.LoadingComponent
 import com.example.feature.home.presentation.components.FeaturedBanner
 import com.example.feature.home.presentation.components.TopRatedMovie
 import com.example.feature.home.presentation.components.UpcomingMovie
-import kotlinx.coroutines.flow.SharedFlow
 import moviescmp.core.ui.generated.resources.Res
 import moviescmp.core.ui.generated.resources.all_movies
 import moviescmp.core.ui.generated.resources.coming_soon
@@ -37,17 +36,8 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun HomeScreen(
     state: HomeState,
-    effect: SharedFlow<HomeEffect>,
     onIntent: (HomeIntent) -> Unit
 ) {
-    LaunchedEffect(Unit) {
-        effect.collect { effect ->
-            when (effect) {
-                is HomeEffect.NavigateToMovieDetails -> { /*Todo: navigation callback*/ }
-            }
-        }
-    }
-
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()

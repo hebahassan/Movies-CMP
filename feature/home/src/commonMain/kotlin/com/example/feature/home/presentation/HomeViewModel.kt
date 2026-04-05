@@ -32,8 +32,8 @@ class HomeViewModel(
         when (intent) {
             HomeIntent.LoadData -> fetchApisData()
 
-            is HomeIntent.MovieClicked -> {
-                /*Todo: Navigation*/
+            is HomeIntent.MovieClicked -> viewModelScope.launch {
+                _effect.emit(HomeEffect.NavigateToMovieDetails(intent.movieId))
             }
 
             is HomeIntent.GenreSelected -> {

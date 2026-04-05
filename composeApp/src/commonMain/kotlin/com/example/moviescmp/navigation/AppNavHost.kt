@@ -4,7 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.feature.details.presentation.MovieDetailsNavigationRoute
+import com.example.feature.details.presentation.MovieDetailsRoute
 import com.example.feature.home.presentation.HomeNavigationRoute
+import com.example.feature.home.presentation.HomeRoute
 
 @Composable
 fun AppNavHost() {
@@ -15,7 +18,15 @@ fun AppNavHost() {
         startDestination = HomeRoute
     ) {
         composable<HomeRoute> {
-            HomeNavigationRoute()
+            HomeNavigationRoute (
+                onDetailsNavigation = { movieId ->
+                    navController.navigate(MovieDetailsRoute(movieId = movieId))
+                }
+            )
+        }
+
+        composable<MovieDetailsRoute> {
+            MovieDetailsNavigationRoute()
         }
     }
 }
