@@ -46,6 +46,7 @@ kotlin {
             implementation(project(":core:network"))
             implementation(project(":core:common"))
             implementation(project(":feature:home"))
+            implementation(project(":feature:details"))
 
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)

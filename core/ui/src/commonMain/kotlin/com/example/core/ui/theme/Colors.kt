@@ -18,3 +18,5 @@ val OnSecondary = Color(0xFFCF6679)
 val OnTertiary = Color(0xFFFFFFFF)
 val OnErrorContainerLight = Color(0xFF5F2120)
 val OnErrorContainerDark = Color(0xFFFFB4AB)
+
+val RatingStarsColor = Color(0xFFFFD700)
