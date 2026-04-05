@@ -2,9 +2,13 @@ package com.example.feature.details.presentation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.example.core.common.logEvent
 import com.example.feature.details.domain.repo.MovieDetailsRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class MovieDetailsViewModel(
     savedStateHandle: SavedStateHandle,
@@ -13,12 +17,35 @@ class MovieDetailsViewModel(
 
     private val movieId = savedStateHandle.toRoute<MovieDetailsRoute>().movieId
 
+    private val _state = MutableStateFlow(MovieDetailsState())
+    val state = _state.asStateFlow()
+
     init {
-        val params = HashMap<String, Int>()
-        params["movieId"] = movieId
-        logEvent(
-            eventName = "movieIdListener",
-            params = params
-        )
+        loadMovieDetails()
+    }
+
+    fun handleIntent(intent: MovieDetailsIntent) {
+        when (intent) {
+            MovieDetailsIntent.ShareMovie -> { /*todo*/ }
+        }
+    }
+
+    private fun loadMovieDetails() {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(movieDetails = DetailsStateMachine.Loading)
+            }
+            runCatching {
+                repository.getMovieDetails(movieId)
+            }.onSuccess { details ->
+                _state.update {
+                    it.copy(movieDetails = DetailsStateMachine.Success(details))
+                }
+            }.onFailure {
+                _state.update {
+                    it.copy(movieDetails = DetailsStateMachine.Error)
+                }
+            }
+        }
     }
 }

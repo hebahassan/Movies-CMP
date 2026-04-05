@@ -26,7 +26,11 @@ fun AppNavHost() {
         }
 
         composable<MovieDetailsRoute> {
-            MovieDetailsNavigationRoute()
+            MovieDetailsNavigationRoute(
+                onNavigateBack = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }

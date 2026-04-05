@@ -46,6 +46,7 @@ kotlin {
                 implementation(libs.androidx.lifecycle.viewmodelCompose)
                 implementation(libs.androidx.lifecycle.runtimeCompose)
                 implementation(libs.navigation.compose)
+                implementation(libs.material.icons.extended)
 
                 //Koin
                 implementation(libs.koin.compose.viewmodel)
